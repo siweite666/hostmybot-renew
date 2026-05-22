@@ -61,7 +61,15 @@ def send_tg(msg: str):
             f"https://api.telegram.org/bot{TG_BOT_TOKEN}/sendMessage",
             data=data,
         )
-        urllib.request.urlopen(req, timeout=15)
+        resp = urllib.request.urlopen(req, timeout=15)
+        result = json.loads(resp.read())
+        if result.get("ok"):
+            print("[OK] Telegram notification sent")
+        else:
+            print(f"[WARN] Telegram API returned: {result}")
+    except urllib.error.HTTPError as e:
+        body = e.read().decode()
+        print(f"[WARN] Telegram HTTP {e.code}: {body}")
     except Exception as e:
         print(f"[WARN] Telegram send failed: {e}")
 
