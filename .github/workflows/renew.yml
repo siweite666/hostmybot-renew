@@ -1,0 +1,25 @@
+name: Auto Renew HostMyBot Server
+
+on:
+  schedule:
+    - cron: '0 0 */3 * *'  # 每3天 UTC 00:00 运行
+  workflow_dispatch: {}
+
+jobs:
+  renew:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Run renewal script
+        env:
+          HOSTMYBOT_TOKEN: ${{ secrets.HOSTMYBOT_TOKEN }}
+          TG_BOT_TOKEN: ${{ secrets.TG_BOT_TOKEN }}
+          TG_CHAT_ID: ${{ secrets.TG_CHAT_ID }}
+        run: python renew.py
